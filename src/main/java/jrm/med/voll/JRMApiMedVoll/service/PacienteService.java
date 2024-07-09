@@ -15,21 +15,31 @@ public class PacienteService {
     @Autowired
     private PacienteRepository repository;
 
-    public void cadastrar(DadosCadastroPaciente dados){
-        repository.save(new Paciente(dados));
+    public Paciente cadastrar(DadosCadastroPaciente dados){
+        var paciente = new Paciente(dados);
+        repository.save(paciente);
+
+        return paciente;
     }
 
     public Page<PacienteDTO> mostrePacientes(Pageable page){
         return repository.findAllByAtivoTrue(page).map(p -> new PacienteDTO(p.getId(),p.getNome(), p.getEmail(), p.getCpf()));
     }
 
-    public void atualizar(DadosAtualizacaoPaciente dados){
+    public Paciente atualizar(DadosAtualizacaoPaciente dados){
         var paciente = repository.findById(dados.id());
         paciente.get().atualizarInformacoes(dados);
+
+        return paciente.get();
     }
 
     public void inativar(Long id){
         var paciente = repository.findById(id);
         paciente.get().inativar();
+    }
+
+    public Paciente detalhar(Long id){
+        var paciente = repository.getReferenceById(id);
+        return paciente;
     }
 }

@@ -10,7 +10,7 @@ import jrm.med.voll.JRMApiMedVoll.models.Especialidade;
 
 //@JsonIgnoreProperties(ignoreUnknown = true)
 public record DadosCadastroMedico(
-        @NotBlank // verifica se o campo não está vazio e nulo
+        @NotBlank(message = "O NOME É OBRIGATÓRIO!") // verifica se o campo não está vazio e nulo
         String nome,
         @NotBlank
         @Email
@@ -27,3 +27,5 @@ public record DadosCadastroMedico(
         DadosEndereco endereco
 ) {
 }
+
+

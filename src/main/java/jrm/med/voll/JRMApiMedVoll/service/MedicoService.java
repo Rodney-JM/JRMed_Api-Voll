@@ -21,9 +21,11 @@ public class MedicoService {
     @Autowired
     private MedicoRepository repository;
 
-    public void cadastrar(DadosCadastroMedico dados){
+    public Medico cadastrar(DadosCadastroMedico dados){
+        var medico = new Medico(dados);
+        repository.save(medico);
 
-        repository.save(new Medico(dados));
+        return medico;
     }
 
     public Page<MedicoDTO> mostrarTodosMedicos(Pageable page){
@@ -31,13 +33,20 @@ public class MedicoService {
                 .map(m -> new MedicoDTO(m.getId(),m.getNome(), m.getEmail(), m.getCrm(), m.getEspecialidade()));
     }
 
-    public void atualizarMedico(DadosAtualizacaoMedico dados){
+    public Medico atualizarMedico(DadosAtualizacaoMedico dados){
         var medico = repository.findById(dados.id());
         medico.get().atualizarInformacoes(dados);
+
+        return medico.get();
     }
 
     public void deletarMedico(Long id){
         var medico = repository.findById(id);
         medico.get().excluir();
+    }
+
+    public Medico detalhar(Long id){
+        var medico = repository.getReferenceById(id);
+        return medico;
     }
 }
