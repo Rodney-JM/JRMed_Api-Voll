@@ -5,8 +5,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jrm.med.voll.JRMApiMedVoll.repository.UsuarioRepository;
 import jrm.med.voll.JRMApiMedVoll.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -17,13 +20,20 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private UsuarioRepository repository;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //filterChain -> cadeia de filtros da aplicação
         var tokenJWT = recuperarToken(request);
+        if(tokenJWT!=null){
+            var subject = tokenService.getSubject(tokenJWT);
+            var usuario = repository.findByLogin(subject);
+            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
 
-        var subject = tokenService.getSubject(tokenJWT);
-
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
 
         filterChain.doFilter(request, response);
     }
@@ -35,6 +45,6 @@ public class SecurityFilter extends OncePerRequestFilter {
             return authorizationHeader.replace("Bearer ", "");
         }
 
-        throw new RuntimeException("Token não enviado!");
+        return null;
     }
 }
