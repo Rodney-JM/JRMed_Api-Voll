@@ -1,5 +1,6 @@
 package jrm.med.voll.JRMApiMedVoll.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jrm.med.voll.JRMApiMedVoll.dto.DadosAgendamentoConsulta;
 import jrm.med.voll.JRMApiMedVoll.dto.DadosDetalhamentoConsulta;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("consultas")
+@SecurityRequirement(name = "bearer-key")
 public class ConsultaController {
     @Autowired
     private ConsultaService service;
@@ -19,9 +21,9 @@ public class ConsultaController {
     @PostMapping
     @Transactional
     public ResponseEntity agendar(@RequestBody @Valid DadosAgendamentoConsulta dados){
-        service.agendar(dados);
+        var dto = service.agendar(dados);
 
-        return ResponseEntity.ok(new DadosDetalhamentoConsulta(null, null, null, null));
+        return ResponseEntity.ok(dto);
     }
 
     @DeleteMapping

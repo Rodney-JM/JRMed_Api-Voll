@@ -1,11 +1,13 @@
-package jrm.med.voll.JRMApiMedVoll.service.validations;
+package jrm.med.voll.JRMApiMedVoll.service.validations.agendamento;
 
 import jrm.med.voll.JRMApiMedVoll.dto.DadosAgendamentoConsulta;
 import jrm.med.voll.JRMApiMedVoll.infra.exception.ValidacaoException;
+import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
 
-public class ValidarHorarioFuncionamentoClinica {
+@Component
+public class ValidarHorarioFuncionamentoClinica implements ValidadorAgendamentoConsultas {
 
     public void validar(DadosAgendamentoConsulta dados){
         var dataConsulta = dados.data();

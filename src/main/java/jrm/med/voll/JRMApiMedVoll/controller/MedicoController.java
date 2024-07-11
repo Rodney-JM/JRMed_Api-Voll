@@ -1,5 +1,6 @@
 package jrm.med.voll.JRMApiMedVoll.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jrm.med.voll.JRMApiMedVoll.dto.DadosAtualizacaoMedico;
 import jrm.med.voll.JRMApiMedVoll.dto.DadosCadastroMedico;
@@ -17,13 +18,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("medicos")
+@SecurityRequirement(name = "bearer-key")
 public class MedicoController {
     @Autowired
     private MedicoService service;
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrarMedico(@Valid DadosCadastroMedico dadosMedico, UriComponentsBuilder uriBuilder){
+    public ResponseEntity cadastrarMedico(@RequestBody @Valid DadosCadastroMedico dadosMedico, UriComponentsBuilder uriBuilder){
         var medico = service.cadastrar(dadosMedico);
 
         var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri();
@@ -40,7 +42,7 @@ public class MedicoController {
 
     @PutMapping
     @Transactional
-    public ResponseEntity atualizar(@Valid DadosAtualizacaoMedico dados){
+    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoMedico dados){
         var medico = service.atualizarMedico(dados);
 
         return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));

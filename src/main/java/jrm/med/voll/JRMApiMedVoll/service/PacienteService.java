@@ -23,7 +23,8 @@ public class PacienteService {
     }
 
     public Page<PacienteDTO> mostrePacientes(Pageable page){
-        return repository.findAllByAtivoTrue(page).map(p -> new PacienteDTO(p.getId(),p.getNome(), p.getEmail(), p.getCpf()));
+        return repository.findAllByAtivoTrue(page)
+                .map(p -> new PacienteDTO(p.getId(),p.getNome(), p.getEmail(), p.getCpf()));
     }
 
     public Paciente atualizar(DadosAtualizacaoPaciente dados){

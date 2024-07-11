@@ -1,5 +1,6 @@
 package jrm.med.voll.JRMApiMedVoll.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jrm.med.voll.JRMApiMedVoll.dto.*;
 import jrm.med.voll.JRMApiMedVoll.service.PacienteService;
@@ -14,13 +15,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("pacientes")
+@SecurityRequirement(name = "bearer-key")
 public class PacienteController {
     @Autowired
     private PacienteService service;
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrarPaciente(@Valid DadosCadastroPaciente dadosPaciente, UriComponentsBuilder builder){
+    public ResponseEntity cadastrarPaciente(@RequestBody @Valid DadosCadastroPaciente dadosPaciente, UriComponentsBuilder builder){
         var paciente = service.cadastrar(dadosPaciente);
         var uri = builder.path("/pacientes/{id}").buildAndExpand(paciente.getId()).toUri();
 
@@ -28,6 +30,7 @@ public class PacienteController {
     }
 
     @GetMapping
+    @Transactional
     public ResponseEntity<Page<PacienteDTO>> mostrarPacientes(@PageableDefault(size = 10, sort = {"nome"}) Pageable page){
         var pagina =  service.mostrePacientes(page);
 
@@ -36,7 +39,7 @@ public class PacienteController {
 
     @PutMapping
     @Transactional
-    public ResponseEntity atualizar(@Valid DadosAtualizacaoPaciente dados){
+    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoPaciente dados){
         var paciente = service.atualizar(dados);
         return ResponseEntity.ok(new DadosDetalhamentoPaciente(paciente));
     }
